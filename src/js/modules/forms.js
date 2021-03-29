@@ -1,8 +1,7 @@
 const forms = () => {
 
-    function bindForms(formSelector, inputPhoneSelector) {
-        const allForms = document.querySelectorAll(formSelector),
-        inputs = document.querySelectorAll(inputPhoneSelector);
+    function bindForms(formSelector) {
+        const allForms = document.querySelectorAll(formSelector);
 
         function sendData() {
             const message = {
@@ -48,20 +47,23 @@ const forms = () => {
                 return res;
             };
         };
-    
-        function validation() {
-            inputs.forEach(item => {
-                item.addEventListener('input', () => {
-                    item.value = item.value.replace(/\D/, '');
-                });
-            });
-        };
-    
-        validation();
         sendData();
     }
 
-    bindForms('form', '[name=user_phone]');
+    bindForms('form');
+        
+    function validation(selector) {
+        const inputs = document.querySelectorAll(selector);
+        inputs.forEach(item => {
+            item.addEventListener('input', () => {
+                item.value = item.value.replace(/\D/, '');
+            });
+        });
+    };
+
+    validation('[name=user_phone]');
+    validation('#width');
+    validation('#height');
 };
 
 export default forms;

@@ -5,6 +5,9 @@ import tabs from './modules/tabs.js';
 
 window.addEventListener('DOMContentLoaded', () => {
     "use strict";
+
+    let modalState = {};
+
     modal();
     tabs();
     forms();
