@@ -17806,6 +17806,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_modals_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/modals.js */ "./src/js/modules/modals.js");
 /* harmony import */ var _modules_forms_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/forms.js */ "./src/js/modules/forms.js");
 /* harmony import */ var _modules_tabs_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/tabs.js */ "./src/js/modules/tabs.js");
+/* harmony import */ var _modules_changeModalState_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/changeModalState.js */ "./src/js/modules/changeModalState.js");
+
 
 
 
@@ -17814,10 +17816,78 @@ window.addEventListener('DOMContentLoaded', function () {
   "use strict";
 
   var modalState = {};
+  Object(_modules_changeModalState_js__WEBPACK_IMPORTED_MODULE_4__["default"])(modalState);
   Object(_modules_modals_js__WEBPACK_IMPORTED_MODULE_1__["default"])();
   Object(_modules_tabs_js__WEBPACK_IMPORTED_MODULE_3__["default"])();
-  Object(_modules_forms_js__WEBPACK_IMPORTED_MODULE_2__["default"])();
+  Object(_modules_forms_js__WEBPACK_IMPORTED_MODULE_2__["default"])(modalState);
 });
+
+/***/ }),
+
+/***/ "./src/js/modules/changeModalState.js":
+/*!********************************************!*\
+  !*** ./src/js/modules/changeModalState.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
+
+
+var changeModalState = function changeModalState(state) {
+  function takeState(event, element) {
+    var elems = document.querySelectorAll(element);
+    elems.forEach(function (item, i) {
+      item.addEventListener(event, function () {
+        switch (item.nodeName) {
+          case 'SPAN':
+            state.form = i;
+            break;
+
+          case 'INPUT':
+            if (item.id === 'width') {
+              state.width = item.value;
+            } else if (item.id === 'height') {
+              state.height = item.value;
+            } else if (item.classList.contains('checkbox')) {
+              if (i === 0) {
+                state.profile = 'Холодное';
+              } else {
+                state.profile = 'Теплое';
+              }
+
+              elems.forEach(function (box, j) {
+                box.checked = false;
+
+                if (j === i) {
+                  box.checked = true;
+                }
+              });
+            }
+
+            break;
+
+          case 'SELECT':
+            state.type = item.value;
+            break;
+        }
+
+        console.log(state);
+      });
+    });
+  }
+
+  takeState('click', '.balcon_icons_img');
+  takeState('input', '#width');
+  takeState('input', '#height');
+  takeState('click', '#view_type');
+  takeState('click', '.checkbox');
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (changeModalState);
 
 /***/ }),
 
@@ -17849,7 +17919,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var forms = function forms() {
+var forms = function forms(state) {
   function bindForms(formSelector) {
     var allForms = document.querySelectorAll(formSelector);
 
@@ -17862,9 +17932,18 @@ var forms = function forms() {
       allForms.forEach(function (item) {
         item.addEventListener('submit', function (e) {
           e.preventDefault();
+          var formData = new FormData(item);
+
+          if (state) {
+            for (var key in state) {
+              formData.append(key, state[key]);
+            }
+
+            console.log(formData);
+          }
+
           var div = document.createElement('div');
           div.classList.add('result');
-          var formData = new FormData(item);
           div.textContent = message.loading;
           item.append(div);
           postData('/assets/server.php', formData).then(function (res) {

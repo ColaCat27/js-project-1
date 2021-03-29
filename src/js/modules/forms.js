@@ -1,4 +1,4 @@
-const forms = () => {
+const forms = (state) => {
 
     function bindForms(formSelector) {
         const allForms = document.querySelectorAll(formSelector);
@@ -13,10 +13,18 @@ const forms = () => {
             allForms.forEach(item => {
                 item.addEventListener('submit', (e) => {
                     e.preventDefault();
+
+                    const formData = new FormData(item);
+
+                    if (state) {
+                        for (let key in state) {
+                            formData.append(key, state[key]);
+                        }
+                        console.log(formData);
+                    }
+
                     const div = document.createElement('div');
                     div.classList.add('result');
-    
-                    const formData = new FormData(item);
                     div.textContent = message.loading;
                     item.append(div);
     
