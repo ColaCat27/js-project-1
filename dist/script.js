@@ -17805,15 +17805,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_slider_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/slider.js */ "./src/js/modules/slider.js");
 /* harmony import */ var _modules_modals_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/modals.js */ "./src/js/modules/modals.js");
 /* harmony import */ var _modules_forms_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/forms.js */ "./src/js/modules/forms.js");
+/* harmony import */ var _modules_tabs_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/tabs.js */ "./src/js/modules/tabs.js");
+
 
 
 
 window.addEventListener('DOMContentLoaded', function () {
   "use strict";
 
-  Object(_modules_modals_js__WEBPACK_IMPORTED_MODULE_1__["default"])('.popup_engineer_btn', '.popup_engineer', '.popup_engineer .popup_close');
-  Object(_modules_modals_js__WEBPACK_IMPORTED_MODULE_1__["default"])('.phone_link', '.popup', '.popup .popup_close');
-  Object(_modules_forms_js__WEBPACK_IMPORTED_MODULE_2__["default"])('form', '[name=user_phone]');
+  Object(_modules_modals_js__WEBPACK_IMPORTED_MODULE_1__["default"])();
+  Object(_modules_tabs_js__WEBPACK_IMPORTED_MODULE_3__["default"])();
+  Object(_modules_forms_js__WEBPACK_IMPORTED_MODULE_2__["default"])();
 });
 
 /***/ }),
@@ -17846,83 +17848,87 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var forms = function forms(formSelector, inputPhoneSelector) {
-  var allForms = document.querySelectorAll(formSelector),
-      inputs = document.querySelectorAll(inputPhoneSelector);
+var forms = function forms() {
+  function bindForms(formSelector, inputPhoneSelector) {
+    var allForms = document.querySelectorAll(formSelector),
+        inputs = document.querySelectorAll(inputPhoneSelector);
 
-  function sendData() {
-    var message = {
-      loading: 'Загрузка...',
-      error: 'Ошибка, повторите ещё раз',
-      success: 'Спасибо, скоро мы с вами свяжемся'
-    };
-    allForms.forEach(function (item) {
-      item.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var div = document.createElement('div');
-        div.classList.add('result');
-        var formData = new FormData(item);
-        div.textContent = message.loading;
-        item.append(div);
-        postData('/assets/server.php', formData).then(function (res) {
-          div.textContent = message.success;
-        }).catch(function (e) {
-          div.textContent = message.error;
-        }).finally(function () {
-          setTimeout(function () {
-            div.remove();
-          }, 4000);
+    function sendData() {
+      var message = {
+        loading: 'Загрузка...',
+        error: 'Ошибка, повторите ещё раз',
+        success: 'Спасибо, скоро мы с вами свяжемся'
+      };
+      allForms.forEach(function (item) {
+        item.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var div = document.createElement('div');
+          div.classList.add('result');
+          var formData = new FormData(item);
+          div.textContent = message.loading;
+          item.append(div);
+          postData('/assets/server.php', formData).then(function (res) {
+            div.textContent = message.success;
+          }).catch(function (e) {
+            div.textContent = message.error;
+          }).finally(function () {
+            setTimeout(function () {
+              div.remove();
+            }, 4000);
+          });
         });
       });
-    });
 
-    function postData(url, data) {
-      var res;
-      return regeneratorRuntime.async(function postData$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              if (!data) {
-                _context.next = 4;
-                break;
-              }
+      function postData(url, data) {
+        var res;
+        return regeneratorRuntime.async(function postData$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (!data) {
+                  _context.next = 4;
+                  break;
+                }
 
-              _context.next = 3;
-              return regeneratorRuntime.awrap(fetch(url, {
-                method: 'POST',
-                body: data
-              }));
+                _context.next = 3;
+                return regeneratorRuntime.awrap(fetch(url, {
+                  method: 'POST',
+                  body: data
+                }));
 
-            case 3:
-              res = _context.sent;
+              case 3:
+                res = _context.sent;
 
-            case 4:
-              return _context.abrupt("return", res);
+              case 4:
+                return _context.abrupt("return", res);
 
-            case 5:
-            case "end":
-              return _context.stop();
+              case 5:
+              case "end":
+                return _context.stop();
+            }
           }
-        }
+        });
+      }
+
+      ;
+    }
+
+    ;
+
+    function validation() {
+      inputs.forEach(function (item) {
+        item.addEventListener('input', function () {
+          item.value = item.value.replace(/\D/, '');
+        });
       });
     }
 
     ;
+    validation();
+    sendData();
   }
 
-  ;
-
-  function validation() {
-    inputs.forEach(function (item) {
-      item.addEventListener('input', function () {
-        item.value = item.value.replace(/\D/, '');
-      });
-    });
-  }
-
-  ;
-  validation();
-  sendData();
+  bindForms('form', '[name=user_phone]');
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (forms);
@@ -17942,13 +17948,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
 
 
-var modals = function modals(triggersSelector, modalSelector, btnCloseSelector) {
-  var overlay = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
-  var triggers = document.querySelectorAll(triggersSelector),
-      modal = document.querySelector(modalSelector),
-      btnClose = document.querySelector(btnCloseSelector);
-
-  function openModal() {
+var modals = function modals() {
+  function bindModal(triggersSelector, modalSelector, btnCloseSelector) {
+    var overlay = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
+    var triggers = document.querySelectorAll(triggersSelector),
+        modal = document.querySelector(modalSelector),
+        btnClose = document.querySelector(btnCloseSelector);
     triggers.forEach(function (item) {
       item.addEventListener('click', function (e) {
         e.preventDefault();
@@ -17959,11 +17964,6 @@ var modals = function modals(triggersSelector, modalSelector, btnCloseSelector) 
         }
       });
     });
-  }
-
-  ;
-
-  function closeModal() {
     btnClose.addEventListener('click', function (e) {
       e.preventDefault();
 
@@ -17981,13 +17981,19 @@ var modals = function modals(triggersSelector, modalSelector, btnCloseSelector) 
         }
       });
     }
-
-    ;
   }
 
-  ;
-  openModal();
-  closeModal();
+  function showModalByTime(selector, time) {
+    var modal = document.querySelector(selector);
+    setTimeout(function () {
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }, time);
+  }
+
+  bindModal('.popup_engineer_btn', '.popup_engineer', '.popup_engineer .popup_close');
+  bindModal('.phone_link', '.popup', '.popup .popup_close', true);
+  bindModal('.popup_calc_btn', '.popup_calc', '.popup_calc_close'); // showModalByTime('.popup', 60000);
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (modals);
@@ -18077,6 +18083,67 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.decoration_slider').slick({
     }
   }]
 });
+
+/***/ }),
+
+/***/ "./src/js/modules/tabs.js":
+/*!********************************!*\
+  !*** ./src/js/modules/tabs.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
+
+
+var tabs = function tabs() {
+  function bindTabs(triggerSelector, contentSelector, activeClass) {
+    var inline = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+    var triggers = document.querySelectorAll(triggerSelector),
+        contents = document.querySelectorAll(contentSelector);
+    triggers.forEach(function (item, i) {
+      item.addEventListener('click', function () {
+        toggleTabs(item);
+        openContent(i);
+      });
+    });
+
+    function toggleTabs(elem) {
+      triggers.forEach(function (item) {
+        item.classList.remove(activeClass);
+      });
+
+      if (activeClass) {
+        elem.classList.add(activeClass);
+      }
+    }
+
+    function openContent() {
+      var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      contents.forEach(function (item) {
+        item.style.display = 'none';
+      });
+
+      if (inline) {
+        contents[index].style.display = 'inline-block';
+      } else {
+        contents[index].style.display = 'block';
+      }
+    }
+
+    ;
+    openContent();
+  }
+
+  bindTabs('.glazing_block', '.glazing_content');
+  bindTabs('.balcon_icons_img', '.big_img img', 'do_image_more', true);
+  bindTabs('.decoration_item div', '.decoration_content > .row > div', 'after_click');
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (tabs);
 
 /***/ })
 
