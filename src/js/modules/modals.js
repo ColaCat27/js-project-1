@@ -4,15 +4,18 @@ const modals = () => {
         const triggers = document.querySelectorAll(triggersSelector),
         modal = document.querySelector(modalSelector),
         btnClose = document.querySelector(btnCloseSelector),
-        allModals = document.querySelectorAll(allModalSelector);
+        allModals = document.querySelectorAll(allModalSelector),
+        scroll = calcScroll();
 
         triggers.forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
-                allModals.forEach(elem => {
-                    elem.style.display = 'none';
-                })
                 if (e.target) {
+                    allModals.forEach(elem => {
+                        elem.style.display = 'none';
+                    })
+                    console.log(scroll);
+                    document.body.style.marginRight = `${scroll}px`;
                     modal.style.display = 'block';
                     document.body.style.overflow = 'hidden';
                 }
@@ -23,6 +26,7 @@ const modals = () => {
             e.preventDefault();
             if (e.target) {
                 allModals.forEach(item => {
+                    document.body.style.marginRight = `0px`;
                     item.style.display = 'none';
                     document.body.style.overflow = '';
                 })
@@ -33,6 +37,7 @@ const modals = () => {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
                     allModals.forEach(item => {
+                        document.body.style.marginRight = `0px`;
                         item.style.display = 'none';
                         document.body.style.overflow = '';
                     })
@@ -47,6 +52,22 @@ const modals = () => {
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
         }, time)
+    }
+
+
+    function calcScroll() {
+        let div = document.createElement('div');
+
+        div.style.width = '50px';
+        div.style.height = '50px';
+        div.style.overflowY = 'scroll';
+        div.style.visibility = 'hidden';
+
+        document.body.appendChild(div);
+        let scrollWidth = div.offsetWidth - div.clientWidth;
+        div.remove();
+
+        return scrollWidth;
     }
 
     bindModal('.popup_engineer_btn', '.popup_engineer', '.popup_engineer .popup_close', true, '[data-modal]');

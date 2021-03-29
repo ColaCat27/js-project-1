@@ -17808,6 +17808,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_tabs_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/tabs.js */ "./src/js/modules/tabs.js");
 /* harmony import */ var _modules_changeModalState_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/changeModalState.js */ "./src/js/modules/changeModalState.js");
 /* harmony import */ var _modules_validate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/validate.js */ "./src/js/modules/validate.js");
+/* harmony import */ var _modules_timer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/timer.js */ "./src/js/modules/timer.js");
+/* harmony import */ var _modules_gallery_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modules/gallery.js */ "./src/js/modules/gallery.js");
+
+
 
 
 
@@ -17818,11 +17822,14 @@ window.addEventListener('DOMContentLoaded', function () {
   "use strict";
 
   var modalState = {};
+  var deadline = '2021-04-23';
   Object(_modules_changeModalState_js__WEBPACK_IMPORTED_MODULE_4__["default"])(modalState);
   Object(_modules_modals_js__WEBPACK_IMPORTED_MODULE_1__["default"])();
   Object(_modules_tabs_js__WEBPACK_IMPORTED_MODULE_3__["default"])();
   Object(_modules_forms_js__WEBPACK_IMPORTED_MODULE_2__["default"])(modalState);
   Object(_modules_validate_js__WEBPACK_IMPORTED_MODULE_5__["default"])();
+  Object(_modules_timer_js__WEBPACK_IMPORTED_MODULE_6__["default"])('.container1', deadline);
+  Object(_modules_gallery_js__WEBPACK_IMPORTED_MODULE_7__["default"])('.preview');
 });
 
 /***/ }),
@@ -18006,6 +18013,52 @@ var forms = function forms(state) {
 
 /***/ }),
 
+/***/ "./src/js/modules/gallery.js":
+/*!***********************************!*\
+  !*** ./src/js/modules/gallery.js ***!
+  \***********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
+
+
+var gallery = function gallery(triggerSelector) {
+  var trigger = document.querySelectorAll(triggerSelector);
+
+  function showPhoto(href) {
+    var div = document.createElement('div'),
+        img = document.createElement('img');
+    div.style.cssText = 'position: fixed; width: 100%; height: 100%; top: 0; left: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.9)';
+    img.src = href;
+    div.append(img);
+    document.body.append(div);
+    div.addEventListener('click', function (e) {
+      if (e.target === div) {
+        div.remove();
+        document.body.style.overflow = '';
+      }
+    });
+  }
+
+  trigger.forEach(function (item) {
+    var button = item.parentElement;
+    button.addEventListener('click', function (e) {
+      e.preventDefault();
+      var link = button.getAttribute('href');
+      showPhoto(link);
+      document.body.style.overflow = 'hidden';
+    });
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (gallery);
+
+/***/ }),
+
 /***/ "./src/js/modules/modals.js":
 /*!**********************************!*\
   !*** ./src/js/modules/modals.js ***!
@@ -18026,15 +18079,18 @@ var modals = function modals() {
     var triggers = document.querySelectorAll(triggersSelector),
         modal = document.querySelector(modalSelector),
         btnClose = document.querySelector(btnCloseSelector),
-        allModals = document.querySelectorAll(allModalSelector);
+        allModals = document.querySelectorAll(allModalSelector),
+        scroll = calcScroll();
     triggers.forEach(function (item) {
       item.addEventListener('click', function (e) {
         e.preventDefault();
-        allModals.forEach(function (elem) {
-          elem.style.display = 'none';
-        });
 
         if (e.target) {
+          allModals.forEach(function (elem) {
+            elem.style.display = 'none';
+          });
+          console.log(scroll);
+          document.body.style.marginRight = "".concat(scroll, "px");
           modal.style.display = 'block';
           document.body.style.overflow = 'hidden';
         }
@@ -18045,6 +18101,7 @@ var modals = function modals() {
 
       if (e.target) {
         allModals.forEach(function (item) {
+          document.body.style.marginRight = "0px";
           item.style.display = 'none';
           document.body.style.overflow = '';
         });
@@ -18055,6 +18112,7 @@ var modals = function modals() {
       modal.addEventListener('click', function (e) {
         if (e.target === modal) {
           allModals.forEach(function (item) {
+            document.body.style.marginRight = "0px";
             item.style.display = 'none';
             document.body.style.overflow = '';
           });
@@ -18069,6 +18127,18 @@ var modals = function modals() {
       modal.style.display = 'block';
       document.body.style.overflow = 'hidden';
     }, time);
+  }
+
+  function calcScroll() {
+    var div = document.createElement('div');
+    div.style.width = '50px';
+    div.style.height = '50px';
+    div.style.overflowY = 'scroll';
+    div.style.visibility = 'hidden';
+    document.body.appendChild(div);
+    var scrollWidth = div.offsetWidth - div.clientWidth;
+    div.remove();
+    return scrollWidth;
   }
 
   bindModal('.popup_engineer_btn', '.popup_engineer', '.popup_engineer .popup_close', true, '[data-modal]');
@@ -18226,6 +18296,72 @@ var tabs = function tabs() {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (tabs);
+
+/***/ }),
+
+/***/ "./src/js/modules/timer.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/timer.js ***!
+  \*********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var timer = function timer(id, deadline) {
+  var addZero = function addZero(num) {
+    if (num <= 9) {
+      return '0' + num;
+    } else {
+      return num;
+    }
+  };
+
+  var getTimeRemaining = function getTimeRemaining(endtime) {
+    var t = Date.parse(endtime) - Date.parse(new Date()),
+        seconds = Math.floor(t / 1000 % 60),
+        minutes = Math.floor(t / 1000 / 60 % 60),
+        hours = Math.floor(t / (1000 * 60 * 60) % 24),
+        days = Math.floor(t / (1000 * 60 * 60 * 24));
+    return {
+      'total': t,
+      'days': days,
+      'hours': hours,
+      'minutes': minutes,
+      'seconds': seconds
+    };
+  };
+
+  var setClock = function setClock(selector, endtime) {
+    var timer = document.querySelector(selector),
+        days = timer.querySelector("#days"),
+        hours = timer.querySelector("#hours"),
+        minutes = timer.querySelector("#minutes"),
+        seconds = timer.querySelector("#seconds"),
+        timeInterval = setInterval(updateClock, 1000);
+    updateClock();
+
+    function updateClock() {
+      var t = getTimeRemaining(endtime);
+      days.textContent = addZero(t.days);
+      hours.textContent = addZero(t.hours);
+      minutes.textContent = addZero(t.minutes);
+      seconds.textContent = addZero(t.seconds);
+
+      if (t.total <= 0) {
+        days.textContent = "00";
+        hours.textContent = "00";
+        minutes.textContent = "00";
+        seconds.textContent = "00";
+        clearInterval(timeInterval);
+      }
+    }
+  };
+
+  setClock(id, deadline);
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (timer);
 
 /***/ }),
 
