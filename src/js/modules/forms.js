@@ -1,5 +1,4 @@
 const forms = (state) => {
-
     function bindForms(formSelector) {
         const allForms = document.querySelectorAll(formSelector);
 
@@ -37,8 +36,11 @@ const forms = (state) => {
                     })
                     .finally(() => {
                         setTimeout(() => {
+                            document.querySelectorAll('[data-modal]').forEach(item => {
+                                item.style.display = "none";
+                            })
                             div.remove();
-                        }, 4000);
+                        }, 2000);
                     })
                 })
             });
@@ -59,19 +61,6 @@ const forms = (state) => {
     }
 
     bindForms('form');
-        
-    function validation(selector) {
-        const inputs = document.querySelectorAll(selector);
-        inputs.forEach(item => {
-            item.addEventListener('input', () => {
-                item.value = item.value.replace(/\D/, '');
-            });
-        });
-    };
-
-    validation('[name=user_phone]');
-    validation('#width');
-    validation('#height');
 };
 
 export default forms;
